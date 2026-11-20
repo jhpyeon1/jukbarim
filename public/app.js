@@ -166,7 +166,7 @@ function recommend(answers,adjust={},catalog=products,options={}){
 }
 const lite=window.JUKBARIM_LITE===true||kiosk;
 const SCENE_LIGHTS=['#7fa06a','#d0a24a','#5f97b3','#b98a5e','#8ec2d6','#b9977a','#8e76c2','#c26a6a','#6fa89a','#c7b46a'];
-const header=()=>takeaway?'<header class="top"><span class="mark">적바림</span><span class="top-note">취향 결과</span></header>':'<header class="top"><button class="mark" data-action="home" aria-label="적바림 처음으로">적바림</button>'+(state.mode===(kiosk?'home':'list')?'':'<button class="top-home" data-action="'+(kiosk?'home':'list')+'">처음으로</button>')+'</header>';
+const header=()=>takeaway?'<header class="top"><span class="mark">적바림</span><span class="top-note">취향 결과</span></header>':'<header class="top"><button class="mark" data-action="home" aria-label="적바림 처음으로">적바림</button>'+(state.mode===(kiosk?'home':'list')?(kiosk?'':'<button class="top-home" data-action="start">추천받기</button>'):'<button class="top-home" data-action="'+(kiosk?'home':'list')+'">처음으로</button>')+'</header>';
 const dock=()=>'';
 const lines=t=>String(t).split('\n').map(x=>'<span class="line"><i>'+esc(x)+'</i></span>').join('');
 const won=n=>'<span class="won">₩</span>'+money(n);

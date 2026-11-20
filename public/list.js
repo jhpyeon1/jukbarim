@@ -220,6 +220,7 @@
         return n && kids[n] ? kids[n].offsetLeft - kids[0].offsetLeft : 0;
       }
       function hold() { wait = performance.now() + 4000; }
+      function holdKiosk() { wait = performance.now() + 6000; }
       function frame(t) {
         raf = requestAnimationFrame(frame);
         if (!track || !track.isConnected) { stop(); return; }
@@ -231,17 +232,33 @@
         pos += SPEED * dt / 1000;
         track.scrollLeft = pos;
       }
-      function stop() { cancelAnimationFrame(raf); raf = 0; if (io) io.disconnect(); io = null; track = null; }
+      /* 키오스크(스탠바이미): 계속 흐르게 하면 기기가 매 순간 다시 그려야 해서 무겁다.
+         3.5초 머물렀다가 한 병씩 부드럽게 넘긴다. 넘기는 동안만 일한다. */
+      var STEP_MS = 3500, timer = 0;
+      function tick() {
+        timer = setTimeout(tick, STEP_MS);
+        if (!track || !track.isConnected) { stop(); return; }
+        if (!seen || document.hidden || performance.now() < wait) return;
+        if (!half) half = measure();
+        var kids = track.children, w = kids[1] ? kids[1].offsetLeft - kids[0].offsetLeft : 0;
+        if (!half || !w) return;
+        if (track.scrollLeft >= half - 1) track.scrollLeft -= half;
+        var next = Math.round(track.scrollLeft / w) * w + w;
+        track.scrollTo({ left: next, behavior: 'smooth' });
+      }
+      function stop() { cancelAnimationFrame(raf); raf = 0; clearTimeout(timer); timer = 0; if (io) io.disconnect(); io = null; track = null; }
       function start() {
         stop();
         if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
         track = root.querySelector('.feature-track');
         if (!track) return;
         half = 0; last = 0; pos = track.scrollLeft; wait = performance.now() + 1200;
-        ['touchstart', 'pointerdown', 'wheel', 'keydown'].forEach(function (ev) { track.addEventListener(ev, hold, { passive: true }); });
-        track.addEventListener('scroll', function () { if (performance.now() < wait) hold(); }, { passive: true });
+        var kiosk = document.documentElement.classList.contains('is-kiosk'), h = kiosk ? holdKiosk : hold;
+        ['touchstart', 'pointerdown', 'wheel', 'keydown'].forEach(function (ev) { track.addEventListener(ev, h, { passive: true }); });
+        if (!kiosk) track.addEventListener('scroll', function () { if (performance.now() < wait) hold(); }, { passive: true });
         if (window.IntersectionObserver) { io = new IntersectionObserver(function (e) { seen = e[0].isIntersecting; }); io.observe(track); }
-        raf = requestAnimationFrame(frame);
+        if (document.documentElement.classList.contains('is-kiosk')) timer = setTimeout(tick, STEP_MS);
+        else raf = requestAnimationFrame(frame);
       }
       return { start: start, stop: stop };
     })();
