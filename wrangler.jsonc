@@ -1,0 +1,7 @@
+{
+  // 클라우드플레어 워커 이름. 지금 쓰는 주소(rapid-king-0272.jhpyeon1.workers.dev)의 앞부분과 같아야 합니다.
+  "name": "rapid-king-0272",
+  "compatibility_date": "2026-11-01",
+  // public 폴더 안의 파일을 그대로 사이트로 올립니다.
+  "assets": { "directory": "./public" }
+}

@@ -1,0 +1,39 @@
+/* The existing painting already contains the grain. Only one texture moves. */
+.painting{inset:-3%;animation:painting-drift 44s ease-in-out infinite alternate;will-change:transform}
+@keyframes painting-drift{from{transform:translate3d(-.6%,0,0) scale(1.015)}to{transform:translate3d(.7%,.5%,0) scale(1.025)}}
+.painting-paused .painting,.painting-held .painting{animation-play-state:paused}
+html[data-still=true] .painting{animation:none;will-change:auto}
+/* Do not animate an entire long result document or retain its compositing layer. */
+.result-screen{animation:none}
+
+/* webOS: preserve translucent color, fine borders, and highlights without
+   resampling the moving scene beneath every card. No live blur or blend layers. */
+html[data-render=lite] .welcome-panel,
+html[data-render=lite] .question-panel,
+html[data-render=lite] .product,
+html[data-render=lite] .type-reading,
+html[data-render=lite] .type-summary,
+html[data-render=lite] .recommendation-heading,
+html[data-render=lite] dialog,
+html[data-render=lite] dialog::backdrop{
+  backdrop-filter:none;-webkit-backdrop-filter:none;
+}
+html[data-render=lite] .welcome-panel,
+html[data-render=lite] .question-panel,
+html[data-render=lite] .type-summary{
+  background-color:rgba(17,44,53,.72);
+  background-image:linear-gradient(125deg,rgba(246,253,248,.065),rgba(246,253,248,.01)55%,rgba(246,253,248,.025));
+  box-shadow:inset 0 1px 0 #ffffff26,inset 1px 0 0 #ffffff12,0 8px 24px #03151e24;
+}
+html[data-render=lite] .recommendation-heading{background-color:rgba(16,44,53,.55)}
+html[data-render=lite] .illustrated-product{background-color:rgba(16,44,53,.58)}
+html[data-render=lite] dialog{background-color:rgba(21,53,61,.96);box-shadow:0 8px 28px #00151c66}
+html[data-render=lite] .reading-sheet .type-reading{background:none;box-shadow:none}
+html[data-render=lite] .question-screen{animation:kiosk-reveal .18s ease-out}
+html[data-render=lite] .type-summary,html[data-render=lite] .recommendation-overview{animation:none}
+html[data-render=lite] dialog.reading-sheet[open]{animation:kiosk-reveal .18s ease-out}
+html[data-render=lite] .progress i{transition:none}
+html[data-render=lite] .start,html[data-render=lite] .option,html[data-render=lite] .reading-more{transition:background-color .16s,border-color .16s}
+html[data-render=lite] .start:hover,html[data-render=lite] .option:hover,html[data-render=lite] .reading-more:hover{transform:none}
+@keyframes kiosk-reveal{from{opacity:.65}to{opacity:1}}
+@media(prefers-reduced-motion:reduce){.painting{animation:none;will-change:auto}html[data-render] .question-screen,html[data-render] dialog.reading-sheet[open]{animation:none}}
