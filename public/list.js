@@ -62,7 +62,9 @@
       if (by) list.sort(function (a, b) { return by(a, b) || a.order - b.order; });
       return list;
     }
-    function rank(g) { var i = C.groups.indexOf(g); return i < 0 ? 99 : i; }
+    /* '전체' 목록과 오늘의 추천 선반의 순서: 와인 먼저. 주종 버튼 줄은 catalog의 GROUPS(탁주부터)를 따른다 */
+    var LIST_ORDER = ['레드 와인', '화이트 와인', '탁주', '약주·청주', '과실주', '증류주', '기타 와인'];
+    function rank(g) { var i = LIST_ORDER.indexOf(g); return i < 0 ? 99 : i; }
     function groups() {
       var names = C.groups.slice();
       products().forEach(function (p) { if (names.indexOf(p.group) < 0) names.push(p.group); });
