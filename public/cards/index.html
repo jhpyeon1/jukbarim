@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>적바림 — 샘플러 설명 카드</title>
+<link rel="preload" as="font" href="../assets/WantedSansVariable.woff2" type="font/woff2" crossorigin>
+<style>
+@font-face{font-family:'Wanted Sans';src:url('../assets/WantedSansVariable.woff2') format('woff2');font-weight:100 900;font-display:block}
+*{box-sizing:border-box;margin:0;padding:0}
+html{background:#d9d9d7;color:#161617;font-family:'Wanted Sans',system-ui,sans-serif;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+button,input,select{font:inherit;color:inherit}
+
+/* ───── 화면: 고르는 곳 ───── */
+.ui{position:fixed;left:0;top:0;bottom:0;width:22rem;display:flex;flex-direction:column;background:#f4f4f2;border-right:1px solid #c9c9c7;font-size:14px}
+.ui header{padding:1.25rem 1.25rem .75rem}
+.ui h1{font-size:1.125rem;font-weight:650;letter-spacing:-.02em}
+.ui .opts{display:flex;flex-wrap:wrap;gap:.5rem 1rem;padding:0 1.25rem .75rem;font-size:13px;color:#4c4c50}
+.ui .opts label{display:flex;align-items:center;gap:.375rem;cursor:pointer}
+.ui .find{display:flex;gap:.5rem;padding:0 1.25rem .75rem}
+.ui .find input{flex:1;height:2.25rem;padding:0 .75rem;border:1px solid #c9c9c7;border-radius:.25rem;background:#fff}
+.ui .find select{height:2.25rem;padding:0 .5rem;border:1px solid #c9c9c7;border-radius:.25rem;background:#fff}
+.ui ul{flex:1;overflow:auto;list-style:none;border-top:1px solid #dcdcda}
+.ui li{display:grid;grid-template-columns:1.25rem minmax(0,1fr) 3.25rem;align-items:center;gap:.5rem;padding:.5rem 1.25rem;border-bottom:1px solid #e6e6e4;cursor:pointer}
+.ui li.on{background:#fff}
+.ui li small{display:block;color:#7a7a7f;font-size:12px}
+.ui li input[type=number]{width:3.25rem;height:1.875rem;padding:0 .375rem;border:1px solid #c9c9c7;border-radius:.25rem;background:#fff;text-align:right}
+.ui li input[type=number]:disabled{opacity:.35}
+.ui footer{padding:.875rem 1.25rem;border-top:1px solid #c9c9c7;display:flex;align-items:center;justify-content:space-between;gap:.75rem;background:#ececea}
+.ui footer p{font-size:13px;color:#4c4c50}
+.ui footer .row{display:flex;gap:.5rem}
+.btn{height:2.5rem;padding:0 1rem;border:0;border-radius:.25rem;background:#161617;color:#fff;font-weight:600;cursor:pointer}
+.btn-line{background:none;color:#161617;box-shadow:inset 0 0 0 1px #161617}
+.note{padding:.5rem 1.25rem;font-size:12px;color:#a2262e}
+.preview{margin-left:22rem;padding:2rem 0 4rem;display:flex;flex-direction:column;align-items:center;gap:1.5rem}
+.empty{margin-top:30vh;color:#6a6a6e;font-size:14px}
+
+/* ───── 인쇄물: A4 한 장에 66×92mm 카드 9장 ───── */
+.sheet{position:relative;width:210mm;height:297mm;background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.18);overflow:hidden}
+.mark{position:absolute;background:#000}
+.mark.h{height:.15mm;width:4mm}
+.mark.v{width:.15mm;height:4mm}
+.card{position:absolute;width:66mm;height:92mm;padding:5.2mm 5mm 4.4mm;display:flex;flex-direction:column;overflow:hidden}
+.guides .card{outline:.1mm dashed #cfcfcf;outline-offset:-.05mm}
+.k-meta{font-size:7pt;line-height:1.3;color:#5c5c61;letter-spacing:.01em;font-variant-numeric:tabular-nums}
+.k-name{margin-top:1.1mm;font-size:13pt;font-weight:650;line-height:1.24;letter-spacing:-.025em;word-break:keep-all;overflow-wrap:anywhere}
+.k-orig{margin-top:.6mm;font-size:7pt;line-height:1.3;color:#5c5c61}
+.k-who{margin-top:.6mm;font-size:7pt;line-height:1.35;color:#5c5c61;word-break:keep-all}
+.k-aroma{margin-top:2.6mm;padding-top:2.4mm;border-top:.2mm solid #161617;font-size:8.5pt;font-weight:600;line-height:1.35;letter-spacing:-.01em;color:#a2262e;word-break:keep-all}
+.k-desc{margin-top:1.4mm;flex:1 1 auto;min-height:0;overflow:hidden;font-size:8pt;line-height:1.6;letter-spacing:-.01em;word-break:keep-all}
+.k-foot{flex:0 0 auto;margin-top:2mm}
+.k-scale{display:grid;grid-template-columns:1fr 1fr;column-gap:3.5mm;row-gap:1.1mm}
+.k-scale p{display:flex;align-items:center;justify-content:space-between;font-size:7pt;line-height:1;color:#3a3a3e}
+.k-dots{display:flex;gap:.7mm}
+.k-dots i{width:1.8mm;height:1.8mm;border-radius:50%;box-shadow:inset 0 0 0 .18mm #9a9a9e}
+.k-dots i.on{background:#161617;box-shadow:none}
+.k-end{display:flex;align-items:flex-end;justify-content:space-between;margin-top:2.6mm}
+.k-price{font-size:7.5pt;font-weight:600;font-variant-numeric:tabular-nums}
+.k-logo{width:11mm;height:3.7mm;margin-left:auto;background:url('../assets/logo-ink.png') right center/contain no-repeat}
+.card.short .k-desc{color:#161617}
+.flag{position:absolute;right:1mm;top:1mm;padding:.4mm 1mm;border-radius:.6mm;background:#a2262e;color:#fff;font-size:5.5pt}
+
+@page{size:A4;margin:0}
+@media print{
+  html{background:#fff}
+  .ui,.flag{display:none!important}
+  .preview{margin:0;padding:0;gap:0;display:block}
+  .sheet{box-shadow:none;page-break-after:always;break-after:page}
+  .sheet:last-child{page-break-after:auto;break-after:auto}
+  .guides .card{outline:0}
+}
+</style>
+</head>
+<body>
+<aside class="ui">
+  <header><h1>샘플러 설명 카드</h1></header>
+  <div class="opts">
+    <label><input type="checkbox" id="opt-price"> 병 가격 넣기</label>
+    <label><input type="checkbox" id="opt-guides" checked> 화면에 칸 경계 보기</label>
+  </div>
+  <div class="find"><input id="q" type="search" placeholder="이름 검색" autocomplete="off"><select id="g"></select></div>
+  <ul id="list"></ul>
+  <p class="note" id="note" hidden></p>
+  <footer><p id="sum">0장</p><div class="row"><button class="btn btn-line" id="clear">선택 해제</button><button class="btn" id="print">인쇄</button></div></footer>
+</aside>
+<main class="preview" id="preview"></main>
+
+<script src="../config.js"></script>
+<script src="../db.js"></script>
+<script src="../catalog.js"></script>
+<script>
+(function () {
+  var C = window.JukbarimCatalog, KEY = 'jukbarim-cards-v1';
+  var COLS = 3, ROWS = 3, W = 66, H = 92, X0 = (210 - COLS * W) / 2, Y0 = (297 - ROWS * H) / 2;
+  var state = { pick: {}, price: false, guides: true };
+  try { var s = JSON.parse(localStorage.getItem(KEY) || 'null'); if (s) state = Object.assign(state, s); } catch (e) {}
+  function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} }
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  function money(n) { return '₩' + Number(n).toLocaleString('ko-KR'); }
+  function byId(id) { var r = null; C.products.forEach(function (p) { if (p.id === id) r = p; }); return r; }
+  var $ = function (id) { return document.getElementById(id); };
+
+  /* ── 목록 ── */
+  function paintGroups() {
+    var g = $('g'), cur = g.value;
+    g.innerHTML = '<option value="">전체</option>' + C.groups.filter(function (x) { return C.products.some(function (p) { return p.group === x; }); })
+      .map(function (x) { return '<option' + (x === cur ? ' selected' : '') + '>' + esc(x) + '</option>'; }).join('');
+  }
+  function paintList() {
+    var q = $('q').value.trim().toLowerCase().replace(/\s+/g, ''), g = $('g').value;
+    var rows = C.products.filter(function (p) {
+      if (g && p.group !== g) return false;
+      return !q || (p.name + (p.original || '') + (p.maker || '')).toLowerCase().replace(/\s+/g, '').indexOf(q) >= 0;
+    });
+    rows.sort(function (a, b) { return (state.pick[b.id] ? 1 : 0) - (state.pick[a.id] ? 1 : 0) || C.groups.indexOf(a.group) - C.groups.indexOf(b.group) || a.order - b.order; });
+    $('list').innerHTML = rows.map(function (p) {
+      var n = state.pick[p.id] || 0;
+      return '<li data-id="' + esc(p.id) + '" class="' + (n ? 'on' : '') + '"><input type="checkbox"' + (n ? ' checked' : '') + ' tabindex="-1"><span>' + esc(p.name) +
+        '<small>' + esc([p.cat, p.abv !== null ? p.abv + '%' : ''].filter(Boolean).join(' · ')) + '</small></span>' +
+        '<input type="number" min="1" max="27" value="' + (n || 1) + '"' + (n ? '' : ' disabled') + ' aria-label="장수"></li>';
+    }).join('');
+  }
+  $('list').addEventListener('click', function (e) {
+    var li = e.target.closest('li'); if (!li || e.target.type === 'number') return;
+    var id = li.dataset.id;
+    if (state.pick[id]) delete state.pick[id]; else state.pick[id] = 1;
+    save(); paintList(); paintSheets();
+  });
+  $('list').addEventListener('input', function (e) {
+    if (e.target.type !== 'number') return;
+    var id = e.target.closest('li').dataset.id, v = Math.max(1, Math.min(27, parseInt(e.target.value, 10) || 1));
+    state.pick[id] = v; save(); paintSheets();
+  });
+  $('q').addEventListener('input', paintList);
+  $('g').addEventListener('change', paintList);
+  $('opt-price').checked = state.price; $('opt-guides').checked = state.guides;
+  $('opt-price').onchange = function () { state.price = this.checked; save(); paintSheets(); };
+  $('opt-guides').onchange = function () { state.guides = this.checked; save(); paintSheets(); };
+  $('clear').onclick = function () { state.pick = {}; save(); paintList(); paintSheets(); };
+  $('print').onclick = function () { window.print(); };
+
+  /* ── 카드 ── */
+  function dots(v) { var s = ''; for (var i = 0; i < 5; i++) s += '<i' + (i < v ? ' class="on"' : '') + '></i>'; return s; }
+  function card(p, x, y) {
+    var meta = [p.cat, p.abv !== null ? p.abv + '%' : '', p.vol !== null ? p.vol + 'ml' : ''].filter(Boolean).join(' · ');
+    var who = p.maker || [p.grape, p.country].filter(Boolean).join(' · ');
+    return '<article class="card" data-id="' + esc(p.id) + '" style="left:' + x + 'mm;top:' + y + 'mm">' +
+      '<p class="k-meta">' + esc(meta) + '</p>' +
+      '<h2 class="k-name">' + esc(p.name) + '</h2>' +
+      (p.original ? '<p class="k-orig" lang="en">' + esc(p.original) + '</p>' : '') +
+      (who ? '<p class="k-who">' + esc(who) + '</p>' : '') +
+      (p.aroma && p.aroma.length ? '<p class="k-aroma">' + esc(p.aroma.join(' · ')) + '</p>' : '<p class="k-aroma" style="color:transparent">-</p>') +
+      '<p class="k-desc">' + esc(p.long || p.short || '') + '</p>' +
+      '<div class="k-foot">' +
+        (p.scale && p.scale.length ? '<div class="k-scale">' + p.scale.map(function (s) { return '<p><span>' + esc(s.label) + '</span><span class="k-dots">' + dots(s.value) + '</span></p>'; }).join('') + '</div>' : '') +
+        '<div class="k-end">' + (state.price && !p.soldOut ? '<span class="k-price">' + money(p.price) + '</span>' : '') + '<span class="k-logo" role="img" aria-label="적바림"></span></div>' +
+      '</div></article>';
+  }
+  function marks() {
+    var s = '', i, L = 4, gap = 1.5;
+    for (i = 0; i <= COLS; i++) {
+      var x = X0 + i * W;
+      s += '<i class="mark v" style="left:' + (x - .075) + 'mm;top:' + (Y0 - gap - L) + 'mm"></i><i class="mark v" style="left:' + (x - .075) + 'mm;top:' + (Y0 + ROWS * H + gap) + 'mm"></i>';
+    }
+    for (i = 0; i <= ROWS; i++) {
+      var y = Y0 + i * H;
+      s += '<i class="mark h" style="top:' + (y - .075) + 'mm;left:' + (X0 - gap - L) + 'mm"></i><i class="mark h" style="top:' + (y - .075) + 'mm;left:' + (X0 + COLS * W + gap) + 'mm"></i>';
+    }
+    return s;
+  }
+  /* 설명이 칸을 넘치면: 글자를 조금 줄이고, 그래도 넘치면 짧은 설명으로 바꾼다 */
+  function fit(el) {
+    var d = el.querySelector('.k-desc'), p = byId(el.dataset.id);
+    function over() { return d.scrollHeight > d.clientHeight + 1; }
+    if (!over()) return '';
+    d.style.fontSize = '7.5pt'; d.style.lineHeight = '1.55';
+    if (!over()) return '';
+    if (p && p.short && p.short !== d.textContent) { d.style.fontSize = ''; d.style.lineHeight = ''; d.textContent = p.short; el.classList.add('short'); if (!over()) return 'short'; }
+    return 'cut';
+  }
+  function paintSheets() {
+    var items = [];
+    C.products.forEach(function (p) { var n = state.pick[p.id] || 0; for (var i = 0; i < n; i++) items.push(p); });
+    var per = COLS * ROWS, pages = Math.ceil(items.length / per);
+    $('sum').textContent = items.length ? items.length + '장 · A4 ' + pages + '페이지' : '0장';
+    if (!items.length) { $('preview').innerHTML = '<p class="empty">왼쪽에서 술을 고르면 인쇄 미리보기가 나옵니다.</p>'; $('note').hidden = true; return; }
+    var html = '';
+    for (var pg = 0; pg < pages; pg++) {
+      html += '<section class="sheet' + (state.guides ? ' guides' : '') + '">' + marks();
+      items.slice(pg * per, pg * per + per).forEach(function (p, i) {
+        html += card(p, X0 + (i % COLS) * W, Y0 + Math.floor(i / COLS) * H);
+      });
+      html += '</section>';
+    }
+    $('preview').innerHTML = html;
+    var shorts = [], cuts = [];
+    document.fonts.ready.then(function () {
+      $('preview').querySelectorAll('.card').forEach(function (el) {
+        var r = fit(el), name = el.querySelector('.k-name').textContent;
+        if (r === 'short' && shorts.indexOf(name) < 0) shorts.push(name);
+        if (r === 'cut' && cuts.indexOf(name) < 0) { cuts.push(name); el.insertAdjacentHTML('beforeend', '<span class="flag">설명 넘침</span>'); }
+      });
+      var msg = [];
+      if (shorts.length) msg.push('짧은 설명으로 들어간 카드: ' + shorts.join(', '));
+      if (cuts.length) msg.push('짧은 설명도 넘치는 카드: ' + cuts.join(', '));
+      $('note').textContent = msg.join(' / '); $('note').hidden = !msg.length;
+    });
+  }
+  paintGroups(); paintList(); paintSheets();
+  C.onChange(function () { paintGroups(); paintList(); paintSheets(); });
+})();
+</script>
+</body>
+</html>
