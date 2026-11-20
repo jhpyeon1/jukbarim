@@ -586,10 +586,10 @@ html.is-kiosk .feature-item,html.is-kiosk .feature-item:last-child{flex-basis:19
 
 /* ════════ v5.3 키오스크: 상단에 조작 요소를 모은다 ════════ */
 /* 첫 화면: 상호는 작게, 카테고리를 크게 위로, 그림은 아래로 */
-html.is-kiosk .hub{justify-content:flex-start;padding:2.25rem 0 2rem}
-html.is-kiosk .hub-title{width:5.75rem;height:1.9rem}
-html.is-kiosk .hub-kicker{margin-top:.25rem;font-size:.875rem}
-html.is-kiosk .hub-menu{order:2;margin-top:2.25rem}
+html.is-kiosk .hub{justify-content:flex-start;padding:1.25rem 0 2rem}
+html.is-kiosk .hub-title{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+html.is-kiosk .hub-kicker{margin-top:0;font-size:.9375rem}
+html.is-kiosk .hub-menu{order:2;margin-top:1.5rem}
 html.is-kiosk .hub-menu button{align-items:center;padding:1.875rem 0}
 html.is-kiosk .hub-menu strong{font-size:2.375rem;font-weight:650;letter-spacing:-.035em}
 html.is-kiosk .hub-menu em{font-size:1rem}
