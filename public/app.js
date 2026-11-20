@@ -258,6 +258,22 @@ function showGuide(){
  </div>`,true,'매장 이용 안내','store-guide');
 }
 function showReading(){modal(readingHTML(true),true);}
+/* 휴대폰 상세: 맨 위에서 아래로 끌어내리면 창이 따라 내려가다 닫힌다 */
+if(!kiosk){let y0=0,dy=0,ly=0,lt=0,v=0,drag=false,armed=false;
+ const sheet=()=>dialog.open&&dialog.classList.contains('bottle-sheet');
+ const back=()=>{dialog.style.transition='transform .3s cubic-bezier(.2,.9,.3,1)';dialog.style.transform='';dialog.style.removeProperty('--pull');};
+ dialog.addEventListener('touchstart',e=>{drag=false;armed=false;if(!sheet()||e.touches.length>1)return;const c=dialog.querySelector('.sheet-content');armed=!c||c.scrollTop<=0;dy=0;v=0;y0=ly=e.touches[0].clientY;lt=performance.now();},{passive:true});
+ dialog.addEventListener('touchmove',e=>{if(!armed)return;const y=e.touches[0].clientY,d=y-y0;
+  if(!drag){if(d<-4){armed=false;return;}if(d<8)return;drag=true;y0=y;dialog.style.transition='none';}
+  e.preventDefault();const now=performance.now();v=(y-ly)/Math.max(1,now-lt);ly=y;lt=now;
+  dy=Math.max(0,y-y0);dialog.style.transform='translateY('+dy+'px)';dialog.style.setProperty('--pull',String(Math.max(0,1-dy/innerHeight)));},{passive:false});
+ const end=()=>{if(!drag){armed=false;return;}drag=armed=false;
+  if(dy>innerHeight*.2||(dy>40&&v>.45)){dialog.style.transition='transform .28s cubic-bezier(.3,.6,.4,1)';dialog.style.transform='translateY(100%)';dialog.style.setProperty('--pull','0');
+   const done=()=>{if(dialog.open)dialog.close();};dialog.addEventListener('transitionend',function f(ev){if(ev.target!==dialog)return;dialog.removeEventListener('transitionend',f);done();});setTimeout(done,450);}
+  else back();};
+ dialog.addEventListener('touchend',end);dialog.addEventListener('touchcancel',end);
+ dialog.addEventListener('close',()=>{dialog.style.transition='';dialog.style.transform='';dialog.style.removeProperty('--pull');});
+}
 dialog.addEventListener('close',()=>{if(phone&&history.state&&history.state.jbDialog){ownBack=true;history.back();}if(sheetOverflow!==null){document.documentElement.style.overflow=sheetOverflow;sheetOverflow=null;}resetIdle();});
 dialog.addEventListener('click',e=>{if(e.target!==dialog||!dialog.classList.contains('reading-sheet'))return;const b=dialog.getBoundingClientRect();if(e.clientX<b.left||e.clientX>b.right||e.clientY<b.top||e.clientY>b.bottom)dialog.close();});
 function review(){modal('<h2>내 선택</h2><div>'+questions.map((q,i)=>'<button class="option" data-edit="'+i+'"><span class="number">'+String(i+1).padStart(2,'0')+'</span><span class="option-text"><small>'+q.label+'</small><strong>'+esc(q.options[state.answers[i]]?.title||'건너뛴 질문')+'</strong></span><span>↗</span></button>').join('')+'</div>');dialog.querySelectorAll('[data-edit]').forEach(b=>b.onclick=()=>{state.step=+b.dataset.edit;state.editing=true;state.mode='question';dialog.close();render();});}
