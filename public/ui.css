@@ -583,3 +583,25 @@ html.is-kiosk .feature-item,html.is-kiosk .feature-item:last-child{flex-basis:19
 /* 오늘의 추천이 흐르는 동안 칸 맞춤(스냅)이 끼어들지 않게 */
 .feature-track{scroll-snap-type:none}
 .feature-track:after{display:none}
+
+/* ════════ v5.3 키오스크: 상단에 조작 요소를 모은다 ════════ */
+/* 첫 화면: 상호는 작게, 카테고리를 크게 위로, 그림은 아래로 */
+html.is-kiosk .hub{justify-content:flex-start;padding:2.25rem 0 2rem}
+html.is-kiosk .hub-title{width:5.75rem;height:1.9rem}
+html.is-kiosk .hub-kicker{margin-top:.25rem;font-size:.875rem}
+html.is-kiosk .hub-menu{order:2;margin-top:2.25rem}
+html.is-kiosk .hub-menu button{align-items:center;padding:1.875rem 0}
+html.is-kiosk .hub-menu strong{font-size:2.375rem;font-weight:650;letter-spacing:-.035em}
+html.is-kiosk .hub-menu em{font-size:1rem}
+html.is-kiosk .hub-art{order:3;margin:3rem 0 0;padding:0 30%}
+/* 질문: 선택지를 질문 바로 아래로, 이전·건너뛰기도 선택지 바로 아래로 */
+html.is-kiosk .scene{padding-bottom:2rem}
+html.is-kiosk .scene-no{margin-top:1.75rem;font-size:.9375rem}
+html.is-kiosk .scene-title{font-size:2.125rem}
+html.is-kiosk .choices{margin-top:2.25rem;padding-top:0}
+html.is-kiosk .choice{min-height:5.75rem;padding:1.125rem 0;grid-template-columns:minmax(0,1fr) 1.5rem}
+html.is-kiosk .choice strong{font-size:1.3125rem}
+html.is-kiosk .choice small{margin-top:.25rem;font-size:.9375rem}
+html.is-kiosk .choice-mark{width:1.5rem;height:1.5rem}
+html.is-kiosk .scene-nav{margin-top:0}
+html.is-kiosk .scene-nav .link{padding:1.375rem 0;font-size:1rem}
