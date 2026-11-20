@@ -340,7 +340,7 @@ html.is-kiosk .hub-title{font-size:3.5rem}
    바탕에는 고운 입자와 위에서 내려오는 빛, 병은 언제나 밝은 배경지 위에 그림자와 함께 놓인다.
    이름과 제목은 명조, 숫자와 설명은 고딕. 진열은 화면 끝까지 붙이고 가는 선으로만 나눈다. */
 :root{--serif:inherit;
-  --bg:#e2e2e0;--bg-veil:rgba(226,226,224,.84);--tile:#efeff0;--ink:#161617;--sub:#5f5f64;--faint:#88888d;--line:#cfcfcd;--on-ink:#fff;
+  --bg:#dcdcda;--bg-veil:rgba(220,220,218,.84);--tile:#efeff0;--ink:#161617;--sub:#5c5c61;--faint:#85858a;--line:#c9c9c7;--on-ink:#fff;
   --st1:#fefefe;--st2:#f2f2f3;--st3:#e3e3e5;--floor:rgba(20,20,24,.26);--pool:rgba(255,255,255,.9)}
 @media(prefers-color-scheme:dark){:root{--bg:#18181a;--bg-veil:rgba(24,24,26,.84);--tile:#262628;--ink:#f3f3f1;--sub:#a3a3a6;--faint:#737377;--line:#333336;--on-ink:#18181a;
   --st1:#f4f4f4;--st2:#e4e4e5;--st3:#cdcdd0;--floor:rgba(10,10,14,.34);--pool:rgba(255,255,255,.075)}}
@@ -624,3 +624,6 @@ dialog#dialog.bottle-sheet::backdrop{opacity:var(--pull,1)}
 .bar-tools{border-top:0;border-bottom:1px solid var(--line)}
 .bar .cats{margin-top:.25rem}
 .find input:focus,.find input:focus-visible{outline:none}
+
+/* 밝은 화면 질감: 밝은 바탕에서는 기존 입자가 묻혀서, 어두운 입자를 더 진하게 깐 전용 질감을 쓴다 */
+@media(prefers-color-scheme:light){html:not(.is-kiosk) body,html:not(.is-kiosk) .top,html:not(.is-kiosk) .bar,html:not(.is-kiosk) .filter-bar,html:not(.is-kiosk) dialog{background-image:url('assets/grain-light.png');background-size:120px 120px}}
