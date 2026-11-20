@@ -53,6 +53,7 @@
     function result() {
       var list = products().filter(function (p) { return match(p, f); });
       var by = {
+        'order': function (a, b) { return rank(a.group) - rank(b.group); },
         'price-asc': function (a, b) { return a.price - b.price; },
         'price-desc': function (a, b) { return b.price - a.price; },
         'abv-asc': function (a, b) { return (a.abv === null ? 999 : a.abv) - (b.abv === null ? 999 : b.abv); },
@@ -61,6 +62,7 @@
       if (by) list.sort(function (a, b) { return by(a, b) || a.order - b.order; });
       return list;
     }
+    function rank(g) { var i = C.groups.indexOf(g); return i < 0 ? 99 : i; }
     function groups() {
       var names = C.groups.slice();
       products().forEach(function (p) { if (names.indexOf(p.group) < 0) names.push(p.group); });
@@ -89,6 +91,7 @@
       if (fresh.length >= 3) return { title: '신상', items: fresh.slice(0, 10) };
       var d = new Date(), seed = d.getFullYear() * 372 + d.getMonth() * 31 + d.getDate(), byGroup = {}, order = [], out = [];
       pool.forEach(function (p) { if (!byGroup[p.group]) { byGroup[p.group] = []; order.push(p.group); } byGroup[p.group].push(p); });
+      order.sort(function (a, b) { return rank(a) - rank(b); });
       for (var round = 0; out.length < 8 && round < 4; round++) {
         order.forEach(function (g, gi) {
           var list = byGroup[g];
