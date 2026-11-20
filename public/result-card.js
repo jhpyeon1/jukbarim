@@ -7,8 +7,7 @@
       {text:'적바림 · 취향 노트',size:26,gap:28,color:'#6e6e73'},
       {text:r.title,size:56,weight:400,gap:20},
       {text:r.opening,size:31,gap:46},
-      {text:'추천한 '+snapshot.products.length+'가지 술',size:37,weight:600,gap:12},
-      {text:'추천 주류 구매 시 5% 할인',size:30,weight:600,color:'#1d1d1f',gap:28}
+      {text:'추천한 '+snapshot.products.length+'가지 술',size:37,weight:600,gap:28}
     ];
     snapshot.products.forEach((p,i) => out.push(
       {text:String(i+1).padStart(2,'0')+'  '+p.name,size:39,weight:500,gap:12},

@@ -103,7 +103,7 @@
     function photo(p, cls, small) {
       var url = photoURL(p, small);
       return '<span class="' + cls + (url ? '' : ' no-photo') + '" data-initial="' + esc(p.group.charAt(0)) + '">' +
-        (url ? '<img alt="" src="' + esc(url) + '">' : '') + '</span>';
+        (url ? '<img decoding="async" alt="" src="' + esc(url) + '">' : '') + '</span>';
     }
     function won(n) { return '<span class="won">₩</span>' + money(n); }
     function priceHTML(p) { return '<b>' + won(p.price) + '</b>' + (p.salePrice !== null ? '<s>' + won(p.listPrice) + '</s>' : ''); }
@@ -157,13 +157,13 @@
       badgeEl.parentNode.classList.toggle('on', !!n);
     }
     /* 다음에 붙일 병 사진을 미리 받아 둔다: 스크롤이 닿았을 때는 이미 그려져 있도록 */
-    var warmed = {}, kept = [];
+    var warmed = {};
     function warm(list) {
       list.forEach(function (p) {
         var url = photoURL(p);
         if (!url || warmed[url]) return;
         warmed[url] = 1;
-        var im = new Image(); im.src = url; kept.push(im);
+        var im = new Image(); im.decoding = 'async'; im.src = url;
       });
     }
     function paintSort() {
