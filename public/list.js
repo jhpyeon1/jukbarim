@@ -199,10 +199,10 @@
     function frame() {
       return '<section class="intro enter"><h1 class="fade" tabindex="-1">주류 리스트</h1><p class="intro-sub fade" style="--i:1">우리술과 와인 ' + products().length + '종</p></section>' +
         '<div class="enter">' + shelfHTML() + '</div>' +
-        '<div class="bar"><div class="cats" id="cat-rail" role="group" aria-label="주종"></div>' +
-        '<div class="bar-tools"><label class="find"><span class="visually-hidden">술 찾기</span><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><circle cx="9" cy="9" r="6"/><path d="M14 14l4 4"/></svg>' +
+        '<div class="bar"><div class="bar-tools"><label class="find"><span class="visually-hidden">술 찾기</span><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><circle cx="9" cy="9" r="6"/><path d="M14 14l4 4"/></svg>' +
         '<input id="list-q" type="search" enterkeyhint="search" autocomplete="off" spellcheck="false" placeholder="검색" value="' + esc(f.q) + '"></label>' +
-        '<button class="tune" id="filter-open" aria-haspopup="dialog"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M3 6h7M14 6h3M3 14h3M10 14h7"/><circle cx="12" cy="6" r="2"/><circle cx="8" cy="14" r="2"/></svg><span>필터</span><b id="filter-n" hidden></b></button></div></div>' +
+        '<button class="tune" id="filter-open" aria-haspopup="dialog"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M3 6h7M14 6h3M3 14h3M10 14h7"/><circle cx="12" cy="6" r="2"/><circle cx="8" cy="14" r="2"/></svg><span>필터</span><b id="filter-n" hidden></b></button></div>' +
+        '<div class="cats" id="cat-rail" role="group" aria-label="주종"></div></div>' +
         '<div class="status"><p id="list-count" aria-live="polite"></p><label class="sort"><span class="sort-label" id="sort-label" aria-hidden="true"></span><select id="list-sort" aria-label="정렬">' +
         SORTS.map(function (s) { return '<option value="' + s[0] + '"' + (f.sort === s[0] ? ' selected' : '') + '>' + s[1] + '</option>'; }).join('') + '</select></label></div>' +
         '<div class="active-filters" id="active-filters"></div>' +
@@ -290,7 +290,7 @@
       root.addEventListener('input', function (e) {
         if (e.target.id !== 'list-q') return;
         clearTimeout(typing);
-        typing = setTimeout(function () { f.q = e.target.value.trim(); paintRail(); paintList(); }, host.lite ? 220 : 120);
+        typing = setTimeout(function () { var q = e.target.value.trim(); if (q !== f.q) f.group = ''; f.q = q; paintRail(); paintList(); }, host.lite ? 220 : 120);
       });
       root.addEventListener('change', function (e) { if (e.target.id === 'list-sort') { f.sort = e.target.value; paintSort(); paintList(); } });
       root.addEventListener('keydown', function (e) { if (e.target.id === 'list-q' && e.key === 'Enter') e.target.blur(); });
@@ -314,9 +314,12 @@
         var g = info[t] ? info[t].group : '그 밖에';
         (byGroup[g] = byGroup[g] || []).push(t);
       });
-      var scope = [f.group, f.q ? '‘' + f.q + '’ 검색' : ''].filter(Boolean).join(' · ');
+      var scope = f.q ? '‘' + f.q + '’ 검색' : '';
       return '<div class="filter-body">' +
         (scope ? '<p class="filter-scope">' + esc(scope) + '</p>' : '') +
+        '<section><h3>주종</h3><div class="chips">' + chip('data-fgroup', '', '전체', count(f, 'group'), !f.group) + groups().map(function (g) {
+          return chip('data-fgroup', g, g, count(f, 'group', function (p) { return p.group === g; }), f.group === g);
+        }).join('') + '</div></section>' +
         '<section><h3>가격</h3><div class="chips">' + PRICE.map(function (b) {
           return chip('data-price', b[0], b[1], count(f, 'price', b[2]), f.price === b[0]);
         }).join('') + '</div></section>' +
@@ -329,7 +332,7 @@
             return chip('data-tag', t, t, on ? total : count(withTag(t)), on);
           }).join('') + '</div></section>';
         }).join('') + '</div>' +
-        '<div class="filter-bar"><button class="link" data-filter-clear' + (activeCount() ? '' : ' disabled') + '>모두 지우기</button>' +
+        '<div class="filter-bar"><button class="link" data-filter-clear' + (activeCount() || f.group ? '' : ' disabled') + '>모두 지우기</button>' +
         '<button class="btn" data-filter-apply' + (total ? '' : ' disabled') + '><strong id="filter-total">' + total + '</strong><span>종 보기</span></button></div>';
     }
     function tween(el, to) {
@@ -345,13 +348,15 @@
       });
     }
     function openFilter() {
+      f.group = '';
       host.modal(filterHTML(), true, '필터', 'filter-sheet');
       var content = host.dialog.querySelector('.sheet-content');
       content.onclick = function (e) {
-        var t = e.target.closest('[data-tag],[data-price],[data-abv],[data-filter-clear],[data-filter-apply]');
+        var t = e.target.closest('[data-fgroup],[data-tag],[data-price],[data-abv],[data-filter-clear],[data-filter-apply]');
         if (!t || t.disabled) return;
         if (t.hasAttribute('data-filter-apply')) { host.dialog.close(); return; }
-        if (t.hasAttribute('data-filter-clear')) { f.tags = []; f.price = ''; f.abv = ''; }
+        if (t.hasAttribute('data-filter-clear')) { f.tags = []; f.price = ''; f.abv = ''; f.group = ''; }
+        else if (t.hasAttribute('data-fgroup')) f.group = f.group === t.dataset.fgroup ? '' : t.dataset.fgroup;
         else if (t.dataset.tag) {
           var i = f.tags.indexOf(t.dataset.tag);
           if (i < 0) f.tags.push(t.dataset.tag); else f.tags.splice(i, 1);
