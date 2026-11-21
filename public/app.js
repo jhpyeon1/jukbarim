@@ -340,7 +340,9 @@ document.getElementById('idle-continue').onclick=resumeSession;
 document.getElementById('idle-home').onclick=home;
 idleDialog.addEventListener('cancel',e=>{e.preventDefault();resumeSession();});
 // Capture scrolls in the reading sheet too. Scrolling counts as actively reading.
-['pointerdown','keydown','scroll'].forEach(e=>document.addEventListener(e,resetIdle,{passive:true,capture:true}));
+['pointerdown','keydown'].forEach(e=>document.addEventListener(e,resetIdle,{passive:true,capture:true}));
+// 상단 추천 선반이 스스로 넘어가며 내는 스크롤은 손님 조작이 아니므로 세지 않는다.
+document.addEventListener('scroll',e=>{if(e.target&&e.target.closest&&e.target.closest('.feature-track'))return;resetIdle();},{passive:true,capture:true});
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&idleDeadline)updateCountdown();});
 
 list=window.JukbarimList({app,dialog,esc,money,lite:lite,modal:(...a)=>modal(...a),showList:()=>showList()});
