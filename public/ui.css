@@ -627,3 +627,5 @@ dialog#dialog.bottle-sheet::backdrop{opacity:var(--pull,1)}
 
 /* 밝은 화면 질감: 밝은 바탕에서는 기존 입자가 묻혀서, 어두운 입자를 더 진하게 깐 전용 질감을 쓴다 */
 @media(prefers-color-scheme:light){html:not(.is-kiosk) body,html:not(.is-kiosk) .top,html:not(.is-kiosk) .bar,html:not(.is-kiosk) .filter-bar,html:not(.is-kiosk) dialog{background-image:url('assets/grain-light.png');background-size:120px 120px}}
+/* 키오스크: 자동 복귀 알림창도 조작이 쉬운 화면 위쪽에 */
+html.is-kiosk .idle-dialog{top:22%;transform:translate(-50%,0)}
