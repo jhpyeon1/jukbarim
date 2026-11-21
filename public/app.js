@@ -329,13 +329,13 @@ function resumeSession(){clearIdle();resetIdle();if(idleFocus?.isConnected)idleF
 function updateCountdown(){
  const seconds=Math.max(0,Math.ceil((idleDeadline-Date.now())/1000));
  if(!seconds){home();return;}
- if(seconds<=15){
+ if(seconds<=10){
   if(!idleDialog.open){idleFocus=document.activeElement;idleDialog.showModal();document.getElementById('idle-continue').focus();}
   document.getElementById('idle-seconds').textContent=String(seconds);
  }
 }
 function warnIdle(){if(state.mode==='home'&&!dialog.open)return;updateCountdown();if(idleDeadline)idleCountdown=setInterval(updateCountdown,250);}
-function resetIdle(){if(takeaway||!kiosk){clearIdle();return;}if(idleDialog.open)return;clearTimeout(idleTimer);clearInterval(idleCountdown);idleDeadline=0;if(state.mode!=='home'||dialog.open){idleDeadline=Date.now()+90000;idleTimer=setTimeout(warnIdle,75000);}}
+function resetIdle(){if(takeaway||!kiosk){clearIdle();return;}if(idleDialog.open)return;clearTimeout(idleTimer);clearInterval(idleCountdown);idleDeadline=0;if(state.mode!=='home'||dialog.open){idleDeadline=Date.now()+70000;idleTimer=setTimeout(warnIdle,60000);}}
 document.getElementById('idle-continue').onclick=resumeSession;
 document.getElementById('idle-home').onclick=home;
 idleDialog.addEventListener('cancel',e=>{e.preventDefault();resumeSession();});
